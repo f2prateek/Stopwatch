@@ -5,21 +5,17 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class StopwatchActivity extends Activity {
 	/** Called when the activity is first created. */
 	Chronometer mChronometer;
-	Boolean paused = false;
-	long elapsedTime = 0;
-	int tickCount = 0;
-	Button start, pause, reset;
-	boolean started;
-	int count = 0;
-	int lapCount = 0;
+	Boolean mChronoPaused = false;
+	long mElapsedTime = 0;
+	ImageButton mStartButton, mPauseButton, mStopButton;
+	int mLapCount = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -28,30 +24,30 @@ public class StopwatchActivity extends Activity {
 
 		mChronometer = (Chronometer) findViewById(R.id.chronometer);
 
-		start = (Button) findViewById(R.id.bStart);
-		start.setOnClickListener(startListener);
+		mStartButton = (ImageButton) findViewById(R.id.bStart);
+		mStartButton.setOnClickListener(startListener);
 
-		pause = (Button) findViewById(R.id.bPause);
-		pause.setOnClickListener(pauseListener);
+		mPauseButton = (ImageButton) findViewById(R.id.bPause);
+		mPauseButton.setOnClickListener(pauseListener);
 
-		reset = (Button) findViewById(R.id.bReset);
-		reset.setOnClickListener(resetListener);
+		mStopButton = (ImageButton) findViewById(R.id.bStop);
+		mStopButton.setOnClickListener(stopListener);
 
 	}
 
 	View.OnClickListener startListener = new OnClickListener() {
 		public void onClick(View v) {
-			if (paused)
+			if (mChronoPaused)
 				mChronometer.setBase(SystemClock.elapsedRealtime()
-						- elapsedTime);
-			else if (!started) {
+						- mElapsedTime);
+			else if (!mChronometer.isStarted()) {
 				mChronometer.setBase(SystemClock.elapsedRealtime());
 
-			} else if (!paused) {
+			} else if (!mChronoPaused) {
 				LinearLayout history = (LinearLayout) findViewById(R.id.llLaps);
 				TextView lap = new TextView(getApplicationContext());
-				lapCount++;
-				lap.setText(lapCount
+				mLapCount++;
+				lap.setText(mLapCount
 						+ "."
 						+ timeFormat((SystemClock.elapsedRealtime() - mChronometer
 								.getBase())));
@@ -59,10 +55,9 @@ public class StopwatchActivity extends Activity {
 			}
 
 			mChronometer.start();
-			start.setText(R.string.split);
+			mStartButton.setImageResource(R.drawable.split);
 
-			paused = false;
-			started = true;
+			mChronoPaused = false;
 		}
 
 		private String timeFormat(long l) {
@@ -88,38 +83,33 @@ public class StopwatchActivity extends Activity {
 				secs = "" + seconds;
 			}
 
-			return "\t\t\t" + mins + "\t:\t" + secs;
+			return "\t\t\t" + mins + ":" + secs;
 		}
 	};
 
 	View.OnClickListener pauseListener = new OnClickListener() {
 		public void onClick(View v) {
-			if (!paused) {
+			if (!mChronoPaused) {
 				mChronometer.stop();
-				elapsedTime = SystemClock.elapsedRealtime()
+				mElapsedTime = SystemClock.elapsedRealtime()
 						- mChronometer.getBase();
-				paused = true;
-				start.setText(R.string.start);
+				mChronoPaused = true;
+				mStartButton.setImageResource(R.drawable.start);
 			}
 		}
 	};
 
-	View.OnClickListener resetListener = new OnClickListener() {
+	View.OnClickListener stopListener = new OnClickListener() {
 		public void onClick(View v) {
 			mChronometer.stop();
 			mChronometer.setBase(SystemClock.elapsedRealtime());
-			started = false;
 			LinearLayout history = (LinearLayout) findViewById(R.id.llLaps);
 			history.removeAllViews();
-			if (!paused) {
-				mChronometer.start();
-				started = true;
-				start.setText(R.string.split);
-			} else {
-				start.setText(R.string.start);
-			}
-			paused = false;
-			lapCount = 0;
+			mStartButton.setImageResource(R.drawable.start);
+
+			mChronoPaused = false;
+			mLapCount = 0;
 		}
 	};
+
 }

@@ -4,46 +4,19 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <Chronometer
+    <com.psrivastava.stopwatch.Chronometer
         android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:padding="20dp"
         android:textColor="#505050"
-        android:textSize="75dp" />
-
-    <Button
-        android:id="@+id/bStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/start" />
-
-    <Button
-        android:id="@+id/bPause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/pause" />
-
-    <Button
-        android:id="@+id/bReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/reset" />
-
-    <TextView
-        android:id="@+id/tvTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        android:textSize="70dp" />
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:padding="10dp" >
 
         <LinearLayout
@@ -55,5 +28,39 @@
             android:padding="10dp" >
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/flButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/bStart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/start_button_selector"
+            android:contentDescription="@string/start"
+            android:src="@drawable/start" />
+
+        <ImageButton
+            android:id="@+id/bPause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/pause_button_selector"
+            android:contentDescription="@string/pause"
+            android:src="@drawable/pause" />
+
+        <ImageButton
+            android:id="@+id/bStop"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/stop_button_selector"
+            android:contentDescription="@string/stop"
+            android:src="@drawable/stop" />
+    </LinearLayout>
 
 </LinearLayout>

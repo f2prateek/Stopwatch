@@ -4,6 +4,6 @@
     <string name="start">Start</string>
     <string name="split">Split</string>
     <string name="pause">Pause</string>
-    <string name="reset">Reset</string>
+    <string name="stop">Stop</string>
 
 </resources>
