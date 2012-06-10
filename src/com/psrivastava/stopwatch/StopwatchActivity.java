@@ -63,13 +63,15 @@ public class StopwatchActivity extends Activity {
 		private String timeFormat(long l) {
 			int minutes;
 			float seconds;
+			int milliseconds;
 			String mins;
 			String secs;
 
 			float time = (float) l / 1000;
 
 			minutes = (int) (time / 60);
-			seconds = time % 60;
+			seconds = (time % 60);
+			milliseconds = (int) (((int) l % 1000) / 100);
 
 			if (minutes < 10) {
 				mins = "0" + minutes;
@@ -78,12 +80,12 @@ public class StopwatchActivity extends Activity {
 			}
 
 			if (seconds < 10) {
-				secs = "0" + seconds;
+				secs = "0" + (int) seconds;
 			} else {
-				secs = "" + seconds;
+				secs = "" + (int) seconds;
 			}
 
-			return "\t\t\t" + mins + ":" + secs;
+			return "\t\t\t" + mins + ":" + secs + "." + milliseconds;
 		}
 	};
 
