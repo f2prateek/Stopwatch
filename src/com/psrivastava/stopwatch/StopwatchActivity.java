@@ -3,6 +3,7 @@ package com.psrivastava.stopwatch;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -11,9 +12,12 @@ import android.widget.TextView;
 
 public class StopwatchActivity extends Activity {
 	/** Called when the activity is first created. */
+	private static final String TAG = "StopwatchActivity";
+
 	Chronometer mChronometer;
 	Boolean mChronoPaused = false;
 	long mElapsedTime = 0;
+	LinearLayout buttonContainer;
 	ImageButton mStartButton, mPauseButton, mStopButton;
 	int mLapCount = 0;
 
@@ -21,6 +25,8 @@ public class StopwatchActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		buttonContainer = (LinearLayout) findViewById(R.id.llButtonContainer);
 
 		mChronometer = (Chronometer) findViewById(R.id.chronometer);
 
@@ -37,13 +43,17 @@ public class StopwatchActivity extends Activity {
 
 	View.OnClickListener startListener = new OnClickListener() {
 		public void onClick(View v) {
-			if (mChronoPaused)
+			if (mChronoPaused) {
+				Log.v(TAG, "start-chrono was paused");
+				buttonContainer.setVisibility(View.VISIBLE);
 				mChronometer.setBase(SystemClock.elapsedRealtime()
 						- mElapsedTime);
-			else if (!mChronometer.isStarted()) {
+			} else if (!mChronometer.isStarted()) {
+				Log.v(TAG, "start-chrono was stopped");
+				buttonContainer.setVisibility(View.VISIBLE);
 				mChronometer.setBase(SystemClock.elapsedRealtime());
-
 			} else if (!mChronoPaused) {
+				Log.v(TAG, "split button pressed");
 				LinearLayout history = (LinearLayout) findViewById(R.id.llLaps);
 				TextView lap = new TextView(getApplicationContext());
 				mLapCount++;
@@ -56,7 +66,6 @@ public class StopwatchActivity extends Activity {
 
 			mChronometer.start();
 			mStartButton.setImageResource(R.drawable.split);
-
 			mChronoPaused = false;
 		}
 
@@ -92,6 +101,7 @@ public class StopwatchActivity extends Activity {
 	View.OnClickListener pauseListener = new OnClickListener() {
 		public void onClick(View v) {
 			if (!mChronoPaused) {
+				Log.v(TAG, "pause");
 				mChronometer.stop();
 				mElapsedTime = SystemClock.elapsedRealtime()
 						- mChronometer.getBase();
@@ -103,12 +113,13 @@ public class StopwatchActivity extends Activity {
 
 	View.OnClickListener stopListener = new OnClickListener() {
 		public void onClick(View v) {
+			Log.v(TAG, "stop");
 			mChronometer.stop();
+			buttonContainer.setVisibility(View.INVISIBLE);
 			mChronometer.setBase(SystemClock.elapsedRealtime());
 			LinearLayout history = (LinearLayout) findViewById(R.id.llLaps);
 			history.removeAllViews();
 			mStartButton.setImageResource(R.drawable.start);
-
 			mChronoPaused = false;
 			mLapCount = 0;
 		}

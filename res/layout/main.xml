@@ -30,19 +30,11 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/flButtonContainer"
+        android:id="@+id/llButtonContainer"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal" >
-
-        <ImageButton
-            android:id="@+id/bStart"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/start_button_selector"
-            android:contentDescription="@string/start"
-            android:src="@drawable/start" />
+        android:orientation="horizontal"
+        android:visibility="invisible" >
 
         <ImageButton
             android:id="@+id/bPause"
@@ -62,5 +54,13 @@
             android:contentDescription="@string/stop"
             android:src="@drawable/stop" />
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/bStart"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/start_button_selector"
+        android:contentDescription="@string/start"
+        android:src="@drawable/start" />
 
 </LinearLayout>
