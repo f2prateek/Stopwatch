@@ -14,6 +14,7 @@ import android.widget.TextView;
  * https://github.com/antoniom/Millisecond-Chronometer
  */
 public class Chronometer extends TextView {
+	@SuppressWarnings("unused")
 	private static final String TAG = "Chronometer";
 
 	public interface OnChronometerTickListener {
@@ -69,6 +70,10 @@ public class Chronometer extends TextView {
 	public void start() {
 		mStarted = true;
 		updateRunning();
+	}
+
+	public boolean isRunning() {
+		return mRunning;
 	}
 
 	public boolean isStarted() {

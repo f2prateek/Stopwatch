@@ -3,9 +3,9 @@ package com.psrivastava.stopwatch;
 import android.content.Context;
 import android.view.View;
 
-public class LapView extends View {
+public class LapArrayAdapter extends View {
 
-	public LapView(Context context) {
+	public LapArrayAdapter(Context context) {
 		super(context);
 		// TODO stub, add custom view for laps
 	}
