@@ -1,6 +1,9 @@
 package com.psrivastava.stopwatch;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.app.ListFragment;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -8,41 +11,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class StopwatchActivity extends Activity {
 	/** Called when the activity is first created. */
 	private static final String TAG = "StopwatchActivity";
 
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onRestoreInstanceState(savedInstanceState);
-
-		if (savedInstanceState.getBoolean("running")) {
-			// TODO: DEBUG FLAG
-			Toast.makeText(this, "base changed", Toast.LENGTH_SHORT);
-			mChronometer.setBase(savedInstanceState.getLong("base"));
-			mChronometer.start();
-		}
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
-		outState.putBoolean("running", mChronometer.isRunning());
-		outState.putLong("base", mChronometer.getBase());
-
-		super.onSaveInstanceState(outState);
-	}
-
 	Chronometer mChronometer;
 	Boolean mChronoPaused = false;
 	long mElapsedTime = 0;
 	ImageButton mStartButton, mPauseButton, mStopButton;
-	int mLapCount = 0;
+	static ArrayList<String> mSplitTimes = new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +40,26 @@ public class StopwatchActivity extends Activity {
 		mStopButton = (ImageButton) findViewById(R.id.bStop);
 		mStopButton.setOnClickListener(stopListener);
 
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		if (savedInstanceState.getBoolean("running")) {
+			// TODO: DEBUG FLAG, checking for bug
+			Toast.makeText(this, "base changed", Toast.LENGTH_SHORT);
+			mChronometer.setBase(savedInstanceState.getLong("base"));
+			mChronometer.start();
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putBoolean("running", mChronometer.isRunning());
+		outState.putLong("base", mChronometer.getBase());
+
+		super.onSaveInstanceState(outState);
 	}
 
 	View.OnClickListener startListener = new OnClickListener() {
@@ -84,19 +84,12 @@ public class StopwatchActivity extends Activity {
 			} else if (!mChronoPaused) {
 				// chronometer, is running so split into new lap
 				Log.v(TAG, "split button pressed");
-				LinearLayout history = (LinearLayout) findViewById(R.id.llLaps);
-				TextView lapNumber = new TextView(getApplicationContext());
-				TextView splitTimer = new TextView(getApplicationContext());
-				mLapCount++;
-				lapNumber.setText(mLapCount + ".");
-				splitTimer
-						.setText(timeFormat((SystemClock.elapsedRealtime() - mChronometer
+
+				mSplitTimes
+						.add(timeFormat((SystemClock.elapsedRealtime() - mChronometer
 								.getBase())));
-				
-				//TODO:make linear layout iwht lapNumber and splitTiemr
-				//TODO: make listview
-				
-				history.addView(splitTimer, 0);
+				LapViewFragment.refresh();
+
 			}
 
 			mChronometer.start();
@@ -157,14 +150,34 @@ public class StopwatchActivity extends Activity {
 			mStopButton.setVisibility(View.GONE);
 			mChronometer.stop();
 			mChronometer.setBase(SystemClock.elapsedRealtime());
-			LinearLayout history = (LinearLayout) findViewById(R.id.llLaps);
-			history.removeAllViews();
+			mSplitTimes = null;
+			LapViewFragment.refresh();
 			mStartButton.setImageResource(R.drawable.start);
 			mChronoPaused = false;
-			mLapCount = 0;
 			getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 	};
+
+	public static class LapViewFragment extends ListFragment {
+
+		static LapViewAdapter mLapViewAdapter;
+
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			mLapViewAdapter = new LapViewAdapter(getActivity(), mSplitTimes);
+			setListAdapter(mLapViewAdapter);
+		}
+
+		public static void refresh() {
+			mLapViewAdapter.notifyDataSetChanged();
+		}
+
+		@Override
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			Log.i("FragmentList", "Item clicked: " + id);
+		}
+	}
 
 }

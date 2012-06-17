@@ -5,5 +5,7 @@
     <string name="split">Split</string>
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>
+    
+    <string name="lap">lap</string>
 
 </resources>

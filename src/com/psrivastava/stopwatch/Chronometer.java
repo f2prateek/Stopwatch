@@ -114,6 +114,7 @@ public class Chronometer extends TextView {
 		remaining = (int) (remaining % (1000));
 
 		int milliseconds = (int) (((int) timeElapsed % 1000) / 100);
+		// TODO: show to two digits int milliseconds = (int) (remaining / 1000);
 
 		String text = "";
 
@@ -123,7 +124,7 @@ public class Chronometer extends TextView {
 
 		text += df.format(minutes) + ":";
 		text += df.format(seconds) + ".";
-		text += Integer.toString(milliseconds);
+		text += new DecimalFormat("0").format(milliseconds);
 
 		setText(text);
 	}
