@@ -12,15 +12,15 @@ import android.widget.TextView;
 public class LapViewAdapter extends ArrayAdapter<String> {
 
 	private final Context mContext;
-	private final ArrayList<String> mValues;
+	private final ArrayList<String> mValuesLapSplit;
 	int mLayoutResourceId;
 
 	public LapViewAdapter(Context context, int resourceID,
-			ArrayList<String> values) {
-		super(context, resourceID, values);
+			ArrayList<String> valuesLapSplit) {
+		super(context, resourceID, valuesLapSplit);
 		mContext = context;
 		mLayoutResourceId = resourceID;
-		mValues = values;
+		mValuesLapSplit = valuesLapSplit;
 	}
 
 	@Override
@@ -31,10 +31,12 @@ public class LapViewAdapter extends ArrayAdapter<String> {
 		View rowView = inflater.inflate(mLayoutResourceId, parent, false);
 
 		TextView lapNumber = (TextView) rowView.findViewById(R.id.tvLapNumber);
+		TextView lapSplitTime = (TextView) rowView
+				.findViewById(R.id.tvSplitTimeLap);
+
 		lapNumber.setText(mContext.getString(R.string.lap) + " "
-				+ Integer.toString(mValues.size() - position));
-		TextView splitTime = (TextView) rowView.findViewById(R.id.tvSplitTime);
-		splitTime.setText(mValues.get(position));
+				+ Integer.toString(mValuesLapSplit.size() - position));
+		lapSplitTime.setText(mValuesLapSplit.get(position));
 
 		return rowView;
 	}

@@ -17,7 +17,7 @@ import android.widget.ListView;
 public class StopwatchActivity extends Activity {
 	/** Called when the activity is first created. */
 	private static final String TAG = "StopwatchActivity";
-//s
+	// s
 	Chronometer mChronometer;
 	Boolean mChronoPaused = false;
 	long mElapsedTime = 0;
