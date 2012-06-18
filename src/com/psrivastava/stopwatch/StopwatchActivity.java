@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,7 +24,8 @@ public class StopwatchActivity extends Activity {
 	Boolean mChronoPaused = false;
 	long mElapsedTime = 0;
 	ImageButton mStartButton, mPauseButton, mStopButton;
-	static ArrayList<String> mSplitTimes = new ArrayList<String>();
+	ArrayList<String> mSplitTimes = new ArrayList<String>();
+	LapViewFragment splitTimesFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,12 @@ public class StopwatchActivity extends Activity {
 		mStopButton = (ImageButton) findViewById(R.id.bStop);
 		mStopButton.setOnClickListener(stopListener);
 
+		if (getFragmentManager().findFragmentById(R.id.flLapView) == null) {
+			splitTimesFragment = new LapViewFragment();
+			getFragmentManager().beginTransaction()
+					.add(R.id.flLapView, splitTimesFragment).commit();
+		}
+
 	}
 
 	@Override
@@ -47,8 +56,8 @@ public class StopwatchActivity extends Activity {
 		super.onRestoreInstanceState(savedInstanceState);
 
 		if (savedInstanceState.getBoolean("running")) {
-			// TODO: DEBUG FLAG, checking for bug
-			Toast.makeText(this, "base changed", Toast.LENGTH_SHORT);
+			Log.i("StopwatchActivity", "base changed");
+
 			mChronometer.setBase(savedInstanceState.getLong("base"));
 			mChronometer.start();
 		}
@@ -64,6 +73,7 @@ public class StopwatchActivity extends Activity {
 
 	View.OnClickListener startListener = new OnClickListener() {
 		public void onClick(View v) {
+
 			if (mChronoPaused) {
 				// chronometer was paused, now resume
 				mPauseButton.setVisibility(View.VISIBLE);
@@ -74,9 +84,15 @@ public class StopwatchActivity extends Activity {
 				getWindow().addFlags(
 						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			} else if (!mChronometer.isStarted()) {
+				// chronometer was stopped, restart
+
 				mPauseButton.setVisibility(View.VISIBLE);
 				mStopButton.setVisibility(View.VISIBLE);
-				// chronometer was stopped, restart
+				((FrameLayout) findViewById(R.id.flLapView)).removeAllViews();
+
+				splitTimesFragment = new LapViewFragment();
+				getFragmentManager().beginTransaction()
+						.add(R.id.flLapView, splitTimesFragment).commit();
 				Log.v(TAG, "start-chrono was stopped");
 				mChronometer.setBase(SystemClock.elapsedRealtime());
 				getWindow().addFlags(
@@ -86,9 +102,12 @@ public class StopwatchActivity extends Activity {
 				Log.v(TAG, "split button pressed");
 
 				mSplitTimes
-						.add(timeFormat((SystemClock.elapsedRealtime() - mChronometer
-								.getBase())));
-				LapViewFragment.refresh();
+						.add(0,
+								timeFormat((SystemClock.elapsedRealtime() - mChronometer
+										.getBase())));
+				Log.i("split button listener, first elemtn", mSplitTimes.get(0));
+
+				splitTimesFragment.refresh();
 
 			}
 
@@ -150,8 +169,8 @@ public class StopwatchActivity extends Activity {
 			mStopButton.setVisibility(View.GONE);
 			mChronometer.stop();
 			mChronometer.setBase(SystemClock.elapsedRealtime());
-			mSplitTimes = null;
-			LapViewFragment.refresh();
+			mSplitTimes = new ArrayList<String>();
+
 			mStartButton.setImageResource(R.drawable.start);
 			mChronoPaused = false;
 			getWindow().clearFlags(
@@ -159,18 +178,20 @@ public class StopwatchActivity extends Activity {
 		}
 	};
 
-	public static class LapViewFragment extends ListFragment {
+	public class LapViewFragment extends ListFragment {
 
-		static LapViewAdapter mLapViewAdapter;
+		LapViewAdapter mLapViewAdapter;
 
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			mLapViewAdapter = new LapViewAdapter(getActivity(), mSplitTimes);
+			mLapViewAdapter = new LapViewAdapter(getActivity(),
+					R.layout.list_lap, mSplitTimes);
 			setListAdapter(mLapViewAdapter);
 		}
 
-		public static void refresh() {
+		public void refresh() {
+			Log.i("LapViewFragment", "trigger refresh");
 			mLapViewAdapter.notifyDataSetChanged();
 		}
 

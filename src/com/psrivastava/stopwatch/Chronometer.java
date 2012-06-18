@@ -120,11 +120,13 @@ public class Chronometer extends TextView {
 
 		if (hours > 0) {
 			text += df.format(hours) + ":";
+			text += df.format(minutes) + ".";
+			text += df.format(seconds);
+		} else {
+			text += df.format(minutes) + ":";
+			text += df.format(seconds) + ".";
+			text += new DecimalFormat("0").format(milliseconds);
 		}
-
-		text += df.format(minutes) + ":";
-		text += df.format(seconds) + ".";
-		text += new DecimalFormat("0").format(milliseconds);
 
 		setText(text);
 	}

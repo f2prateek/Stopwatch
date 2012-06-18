@@ -13,10 +13,13 @@ public class LapViewAdapter extends ArrayAdapter<String> {
 
 	private final Context mContext;
 	private final ArrayList<String> mValues;
+	int mLayoutResourceId;
 
-	public LapViewAdapter(Context context, ArrayList<String> values) {
-		super(context, R.layout.list_lap);
+	public LapViewAdapter(Context context, int resourceID,
+			ArrayList<String> values) {
+		super(context, resourceID, values);
 		mContext = context;
+		mLayoutResourceId = resourceID;
 		mValues = values;
 	}
 
@@ -25,11 +28,11 @@ public class LapViewAdapter extends ArrayAdapter<String> {
 		LayoutInflater inflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		View rowView = inflater.inflate(R.layout.list_lap, parent, false);
+		View rowView = inflater.inflate(mLayoutResourceId, parent, false);
 
 		TextView lapNumber = (TextView) rowView.findViewById(R.id.tvLapNumber);
 		lapNumber.setText(mContext.getString(R.string.lap) + " "
-				+ Integer.toString(position));
+				+ Integer.toString(mValues.size() - position));
 		TextView splitTime = (TextView) rowView.findViewById(R.id.tvSplitTime);
 		splitTime.setText(mValues.get(position));
 
